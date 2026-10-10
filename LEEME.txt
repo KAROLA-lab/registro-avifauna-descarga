@@ -1,0 +1,9 @@
+REGISTRO DE AVIFAUNA - VERSION CON FOTOS
+
+Archivos: index.html, manifest.json y sw.js.
+
+Publicar en GitHub Pages: subir estos tres archivos a la raiz del repositorio y activar Settings > Pages > Deploy from a branch > main > /(root).
+
+Incluye lugar, encargado, condiciones meteorologicas, temperatura manual, viento bajo/moderado/alto, velocidad opcional, fecha/hora, parcela, ubicacion y GPS, identificacion de especie con opcion de otra especie, numero de individuos, posicion/comportamiento del ave dentro de la seccion de identificacion, hasta 3 fotos por registro y comentarios u observaciones generales. Se elimino el campo separado de observaciones del avistamiento para evitar duplicarlo.
+
+IMPORTANTE: los registros se guardan en el almacenamiento local del navegador. Las fotos se comprimen y se guardan dentro del registro. El respaldo JSON incluye los datos y las fotos; el CSV es solo para la planilla y no contiene las imagenes. Exportar respaldo JSON regularmente. Si el almacenamiento del navegador se llena, la app avisara que no pudo guardar. Para probar el modo sin conexion, abrir primero la app con internet y volver a cargarla al menos una vez.

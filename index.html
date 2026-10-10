@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#245b48">
+<link rel="manifest" href="manifest.json">
+<title>Registro de avifauna</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#18352b;background:#f4f7f4}
+*{box-sizing:border-box}body{margin:0}header{background:#245b48;color:white;padding:18px 16px}
+header h1{font-size:1.35rem;margin:0 0 5px}header p{margin:0;font-size:.92rem;opacity:.9}
+main{max-width:760px;margin:auto;padding:14px}.panel{background:white;border:1px solid #dce6df;border-radius:14px;padding:16px;margin-bottom:14px}
+h2{font-size:1.05rem;margin:0 0 12px}label{display:block;font-weight:650;font-size:.92rem;margin:12px 0 5px}
+input,select,textarea,button{font:inherit;width:100%;border-radius:9px;padding:11px;border:1px solid #b9c9bf;background:white;color:#18352b}
+textarea{min-height:78px;resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{border:0;background:#245b48;color:white;font-weight:700;margin-top:10px;cursor:pointer}
+button.secondary{background:#e8f0eb;color:#245b48;border:1px solid #cbdcd1}
+button.danger{background:#fff0ee;color:#8b2c21;border:1px solid #efc7c1}
+.small{font-size:.82rem;color:#52685c}.entry{border:1px solid #dce6df;border-radius:10px;padding:12px;margin-top:10px}
+.entry strong{display:block;font-size:1rem}.entry p{margin:5px 0;font-size:.9rem;overflow-wrap:anywhere}
+.status{font-size:.9rem;margin-top:8px;min-height:1.2em}.photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.photo-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid #cbdcd1}.hint{font-size:.82rem;color:#52685c;margin:4px 0}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>🐦 Registro de avifauna</h1><p>Formulario de terreno · Los datos se guardan en este dispositivo</p></header>
+<main>
+<section class="panel">
+<h2>1. Lugar y condiciones del sitio</h2>
+<label for="lugar">Lugar</label>
+<select id="lugar"><option>La Rinconada</option><option>Ojos de Mar</option><option>Llacolén</option><option value="Otro">Otro (especificar)</option></select>
+<div id="otroLugarBox" hidden><label for="otroLugar">Especifica el lugar</label><input id="otroLugar" placeholder="Nombre del lugar"></div>
+<label for="encargado">Encargado</label><input id="encargado" placeholder="Escribe tu nombre" required>
+<label for="meteo">Condiciones meteorológicas</label>
+<select id="meteo"><option>Despejado</option><option>Parcialmente nublado</option><option>Nublado</option><option>Chubascos</option><option>Lluvioso</option><option>Tormenta de arena</option><option value="Otra">Otra</option></select>
+<div id="otraMeteoBox" hidden><label for="otraMeteo">Especifica la condición</label><input id="otraMeteo" placeholder="Describe la condición meteorológica"></div>
+<div class="grid"><div><label for="temperatura">Temperatura (°C)</label><input id="temperatura" type="number" step="0.1" placeholder="Opcional"></div><div><label for="viento">Viento</label><select id="viento"><option value="">Selecciona…</option><option>Bajo</option><option>Moderado</option><option>Alto</option></select></div></div>
+<label for="velocidadViento">Velocidad del viento (km/h, opcional)</label><input id="velocidadViento" type="number" min="0" step="0.1" placeholder="Ingresa la velocidad si la conoces">
+<h2 style="margin-top:18px">2. Datos del avistamiento</h2>
+<div class="grid"><div><label for="fecha">Fecha</label><input id="fecha" type="date" required></div><div><label for="hora">Hora</label><input id="hora" type="time" required></div></div>
+<label for="parcela">Parcela de referencia</label><select id="parcela"><option>Parcela 2</option><option>Parcela 3</option><option>Parcela 4</option><option>Parcela 5</option><option>Otra / sin asignar</option></select>
+<label for="ubicacion">Ubicación del avistamiento</label><select id="ubicacion"><option>Dentro de la parcela</option><option>Fuera de la parcela (costa)</option><option>Fuera de la parcela (camino)</option></select>
+<label>Georreferencia (GPS)</label><div class="grid"><input id="lat" inputmode="decimal" placeholder="Latitud" aria-label="Latitud"><input id="lon" inputmode="decimal" placeholder="Longitud" aria-label="Longitud"></div>
+<button class="secondary" id="gpsBtn" type="button">Obtener ubicación GPS</button><p class="small">El GPS requiere permiso y que la página esté abierta en HTTPS. También puedes ingresar las coordenadas manualmente.</p>
+<h2 style="margin-top:18px">3. Identificación de la especie</h2>
+<label for="especie">Nombre común · busca y selecciona de la lista</label>
+<select id="especie" required><option value="">Selecciona una especie…</option><option value="__OTRA__">Otra especie (especificar)</option></select>
+<div id="otraEspecieBox" hidden><label for="otroComun">Nombre común de la especie</label><input id="otroComun" placeholder="Escribe el nombre común"><label for="otroCientifico">Nombre científico (opcional)</label><input id="otroCientifico" placeholder="Si lo conoces"></div>
+<div class="grid">
+<div><label for="cientifico">Nombre científico</label><input id="cientifico" readonly placeholder="Se completa automáticamente"></div>
+<div><label for="cantidad">Número de individuos</label><input id="cantidad" type="number" min="1" step="1" value="1" required></div>
+</div>
+<label for="posicionAve">Posición o comportamiento del ave</label>
+<select id="posicionAve"><option value="">Selecciona…</option><option>Flotando en el mar</option><option>Pescando en el mar</option><option>Volando</option><option>Descansando en la orilla</option><option>Alimentándose en la orilla</option><option>Cortejando</option><option>Alimentándose de carroña</option><option>Nidificando</option><option value="Otro">Otro (especificar)</option></select>
+<div id="otraPosicionBox" hidden><label for="otraPosicion">Especifica la posición o comportamiento</label><input id="otraPosicion" placeholder="Describe lo observado"></div>
+<label for="fotos">Fotografías (máximo 3 por registro)</label><input id="fotos" type="file" accept="image/*" capture="environment" multiple>
+<p class="hint">Puedes tomar fotos con la cámara o elegirlas de la galería. Se reducirán de tamaño para ahorrar espacio.</p><div id="photoPreview" class="photo-grid"></div>
+<label for="obsGenerales">Comentarios u observaciones generales</label><textarea id="obsGenerales" placeholder="Comentarios generales sobre el lugar o la jornada"></textarea>
+<button id="addBtn">Guardar avistamiento</button><div id="status" class="status" role="status"></div>
+</section>
+<section class="panel">
+<h2>4. Registros guardados</h2>
+<p class="small">Los registros permanecen en este navegador de este dispositivo. Exporta CSV para planilla y el respaldo JSON completo (incluye las fotos) al finalizar la jornada. Las fotos se guardan en este navegador y ocupan espacio.</p>
+<div class="grid"><button id="csvBtn">Exportar CSV para Excel</button><button id="jsonBtn" class="secondary">Respaldo completo (incluye fotos)</button></div>
+<div class="grid"><button id="zipBtn" class="secondary">Descargar ZIP (planilla + fotos JPG)</button><span class="small" style="align-self:center">Incluye la planilla y fotos separadas, identificadas por registro.</span></div>
+<div class="grid"><button id="backupBtn" class="secondary">Importar respaldo JSON</button><button id="clearBtn" class="danger">Borrar todos los registros</button></div>
+<input id="fileInput" type="file" accept=".json,application/json" hidden>
+<p id="summary" class="small"></p><div id="records"></div>
+</section>
+</main>
+<script>
+const SPECIES = [{"comun": "Albatros de Salvin", "cientifico": "Thalassarche salvini"}, {"comun": "Chorlo Dorado", "cientifico": "Pluvialis dominica"}, {"comun": "Chorlo Nevado", "cientifico": "Charadrius nivosus"}, {"comun": "Cormorán Guanay", "cientifico": "Phalacrocorax bougainvilli"}, {"comun": "Cormorán Yeco", "cientifico": "Phalacrocorax brasilianus"}, {"comun": "Gaviota Dominicana", "cientifico": "Larus dominicanus"}, {"comun": "Gaviota Garuma", "cientifico": "Leucophaeus modestus"}, {"comun": "Gaviota Franklin", "cientifico": "Leucophaeus pipixcan"}, {"comun": "Gaviota Peruana", "cientifico": "Larus belcheri"}, {"comun": "Gaviotín Chico", "cientifico": "Sternula lorata"}, {"comun": "Gaviotín Elegante", "cientifico": "Thalasseus elegans"}, {"comun": "Gaviotín Sudamericano", "cientifico": "Sterna hirundinacea"}, {"comun": "Huala", "cientifico": "Podiceps major"}, {"comun": "Jote Cabeza Colorada", "cientifico": "Cathartes aura"}, {"comun": "Pelícano", "cientifico": "Pelecanus thagus"}, {"comun": "Pilpilén Común", "cientifico": "Haematopus palliatus"}, {"comun": "Pilpilén Negro", "cientifico": "Haematopus ater"}, {"comun": "Piquero", "cientifico": "Sula variegata"}, {"comun": "Playero Blanco", "cientifico": "Calidris alba"}, {"comun": "Playero de Baird", "cientifico": "Calidris bairdii"}, {"comun": "Playero de las Rompientes", "cientifico": "Calidris virgata"}, {"comun": "Playero Grande", "cientifico": "Tringa semipalmata"}, {"comun": "Playero Vuelvepiedras", "cientifico": "Arenaria interpres"}, {"comun": "Rayadores", "cientifico": "Rynchops niger"}, {"comun": "Traro", "cientifico": "Caracara plancus"}, {"comun": "Zarapito Común", "cientifico": "Numenius phaeopus"}, {"comun": "Zarapito Pico Recto", "cientifico": "Limosa haemastica"}];
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = "registroAvifaunaV2";
+let records = [];
+let selectedPhotos = [];
+try { records = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch(e) { records=[]; }
+SPECIES.forEach(s=>{const o=document.createElement("option");o.value=s.comun;o.textContent=s.comun;$("especie").appendChild(o);});
+function toggleBox(selectId, boxId, value){$(selectId).addEventListener("change",()=>{$(boxId).hidden=$(selectId).value!==value;});}
+toggleBox("lugar","otroLugarBox","Otro");toggleBox("meteo","otraMeteoBox","Otra");toggleBox("posicionAve","otraPosicionBox","Otro");
+$("especie").addEventListener("change",()=>{$("otraEspecieBox").hidden=$("especie").value!=="__OTRA__";if($("especie").value==="__OTRA__"){$("cientifico").value="";}else{$("otroComun").value="";$("otroCientifico").value="";updateScientific();}});
+function updateScientific(){const s=SPECIES.find(x=>x.comun===$("especie").value);$("cientifico").value=s?s.cientifico:"";}
+$("especie").addEventListener("change",updateScientific);
+function imageToDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=reject;reader.onload=()=>{const img=new Image();img.onerror=reject;img.onload=()=>{const max=1000,scale=Math.min(1,max/Math.max(img.width,img.height));const canvas=document.createElement("canvas");canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL("image/jpeg",0.68));};img.src=reader.result;};reader.readAsDataURL(file);});}
+$("fotos").addEventListener("change",async e=>{const files=Array.from(e.target.files||[]);if(files.length>3){alert("Puedes adjuntar un máximo de 3 fotos por registro.");e.target.value="";selectedPhotos=[];$("photoPreview").innerHTML="";return;}try{selectedPhotos=await Promise.all(files.map(imageToDataURL));$("photoPreview").innerHTML=selectedPhotos.map((src,i)=>`<img src="${src}" alt="Foto ${i+1}">`).join("");}catch(err){alert("No se pudo cargar una foto. Prueba con otra imagen.");selectedPhotos=[];} });
+function nowParts(){const d=new Date();const local=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString();return {fecha:local.slice(0,10),hora:local.slice(11,16)};}
+function setNow(){const n=nowParts();$("fecha").value=n.fecha;$("hora").value=n.hora;} setNow();
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(records));render();}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){
+ $("summary").textContent=`${records.length} registros · ${records.reduce((a,r)=>a+Number(r.cantidad||0),0)} individuos contabilizados`;
+ $("records").innerHTML=records.slice().reverse().map((r,revIndex)=>{const idx=records.length-1-revIndex;return `<article class="entry"><strong>${esc(r.comun||r.especie)} · ${esc(r.cantidad)} individuo(s)</strong><p><i>${esc(r.cientifico||"")}</i></p><p>${esc(r.lugar||"")} · Encargado: ${esc(r.encargado||"")}</p><p>${esc(r.fecha)} · ${esc(r.hora)} · ${esc(r.parcela||"")}</p><p>${esc(r.ubicacion||"")}</p><p>Meteorología: ${esc(r.meteo||"")}; temperatura: ${esc(r.temperatura||"—")} °C; viento: ${esc(r.viento||"—")} ${r.velocidadViento?`(${esc(r.velocidadViento)} km/h)`:""}</p><p>Posición/comportamiento: ${esc(r.posicionAve||"")}</p>${r.lat||r.lon?`<p>GPS: ${esc(r.lat)}, ${esc(r.lon)}</p>`:""}${r.obsGenerales?`<p>Comentarios generales: ${esc(r.obsGenerales)}</p>`:""}${r.fotos?.length?`<div class="photo-grid">${r.fotos.map(src=>`<img src="${src}" alt="Fotografía del registro">`).join("")}</div>`:""}<button class="danger" data-delete="${idx}">Eliminar este registro</button></article>`;}).join("");
+ $("records").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{if(confirm("¿Eliminar este registro?")){records.splice(Number(b.dataset.delete),1);save();}}));
+}
+$("addBtn").addEventListener("click",()=>{
+ const chosen=$("especie").value, s=SPECIES.find(x=>x.comun===chosen), cantidad=Number($("cantidad").value);
+ const comun=chosen==="__OTRA__"?$("otroComun").value.trim():s?.comun;
+ const cientifico=chosen==="__OTRA__"?$("otroCientifico").value.trim():(s?.cientifico||"");
+ if(!$("encargado").value.trim()){$("status").textContent="Escribe el nombre del encargado.";return;}
+ if(!comun){$("status").textContent="Selecciona una especie o escribe el nombre de la otra especie.";return;}
+ if(!Number.isInteger(cantidad)||cantidad<1){$("status").textContent="Ingresa un número entero de individuos mayor que cero.";return;}
+ if($("lugar").value==="Otro"&&!$("otroLugar").value.trim()){$("status").textContent="Especifica el lugar.";return;}
+ const meteo=$("meteo").value==="Otra"?$("otraMeteo").value.trim():$("meteo").value;
+ const posicion=$("posicionAve").value==="Otro"?$("otraPosicion").value.trim():$("posicionAve").value;
+ records.push({lugar:$("lugar").value==="Otro"?$("otroLugar").value.trim():$("lugar").value,encargado:$("encargado").value.trim(),meteo,temperatura:$("temperatura").value, viento:$("viento").value,velocidadViento:$("velocidadViento").value,posicionAve:posicion,fecha:$("fecha").value,hora:$("hora").value,parcela:$("parcela").value,ubicacion:$("ubicacion").value,lat:$("lat").value.trim(),lon:$("lon").value.trim(),comun,cientifico,cantidad,obsGenerales:$("obsGenerales").value.trim(),fotos:selectedPhotos,creadoEn:new Date().toISOString()});
+ try{save();}catch(err){records.pop();$("status").textContent="No hay suficiente espacio para guardar este registro. Exporta un respaldo y reduce la cantidad o tamaño de las fotos.";return;}
+ $("especie").value="";updateScientific();$("otraEspecieBox").hidden=true;$("otroComun").value="";$("otroCientifico").value="";$("cantidad").value="1";$("obsGenerales").value="";$("fotos").value="";selectedPhotos=[];$("photoPreview").innerHTML="";$("status").textContent="Avistamiento guardado en este dispositivo.";setNow();
+});
+$("gpsBtn").addEventListener("click",()=>{if(!navigator.geolocation){$("status").textContent="Este navegador no permite obtener GPS.";return;}$("status").textContent="Obteniendo ubicación…";navigator.geolocation.getCurrentPosition(pos=>{$("lat").value=pos.coords.latitude.toFixed(6);$("lon").value=pos.coords.longitude.toFixed(6);$("status").textContent="Coordenadas obtenidas.";},err=>{$("status").textContent="No se pudo obtener el GPS. Revisa los permisos o ingresa las coordenadas manualmente.";},{enableHighAccuracy:true,timeout:15000,maximumAge:0});});
+function download(name,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
+function buildCsv(photoNamesByRecord=null){
+ const headers=["Lugar","Encargado","Condiciones meteorológicas","Temperatura °C","Viento","Velocidad viento km/h","Posición/comportamiento","Fecha","Hora","Parcela de referencia","Ubicación","Latitud","Longitud","Nombre común","Nombre científico","Número de individuos","Comentarios u observaciones generales","Cantidad de fotos","Archivos de fotos"];
+ const rows=records.map((r,i)=>[r.lugar,r.encargado,r.meteo,r.temperatura,r.viento,r.velocidadViento,r.posicionAve,r.fecha,r.hora,r.parcela,r.ubicacion,r.lat,r.lon,r.comun||r.especie,r.cientifico||"",r.cantidad,r.obsGenerales,(r.fotos||[]).length,photoNamesByRecord?((photoNamesByRecord[i]||[]).join(" | ")):""]);
+ return "\\uFEFF"+[headers,...rows].map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\\r\\n");
+}
+
+function buildCsv(photoNamesByRecord=null){
+ const headers=["Lugar","Encargado","Condiciones meteorológicas","Temperatura °C","Viento","Velocidad viento km/h","Posición/comportamiento","Fecha","Hora","Parcela de referencia","Ubicación","Latitud","Longitud","Nombre común","Nombre científico","Número de individuos","Comentarios u observaciones generales","Cantidad de fotos","Archivos de fotos"];
+ const rows=records.map((r,i)=>[r.lugar,r.encargado,r.meteo,r.temperatura,r.viento,r.velocidadViento,r.posicionAve,r.fecha,r.hora,r.parcela,r.ubicacion,r.lat,r.lon,r.comun||r.especie,r.cientifico||"",r.cantidad,r.obsGenerales,(r.fotos||[]).length,photoNamesByRecord?((photoNamesByRecord[i]||[]).join(" | ")):""]);
+ return "\uFEFF"+[headers,...rows].map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\r\n");
+}
+$("csvBtn").addEventListener("click",()=>download("registro_avifauna.csv",buildCsv(),"text/csv;charset=utf-8"));
+$("jsonBtn").addEventListener("click",()=>download("respaldo_avifauna.json",JSON.stringify(records,null,2),"application/json"));
+function dataUrlToBytes(dataUrl){const binary=atob((dataUrl.split(",")[1]||""));const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes;}
+const zipEncoder=new TextEncoder();
+function zipCrc32(bytes){let crc=0xffffffff;for(let i=0;i<bytes.length;i++){crc^=bytes[i];for(let j=0;j<8;j++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
+function zipDosDateTime(date=new Date()){const year=Math.max(1980,date.getFullYear());return {time:(date.getHours()<<11)|(date.getMinutes()<<5)|(Math.floor(date.getSeconds()/2)),date:((year-1980)<<9)|((date.getMonth()+1)<<5)|date.getDate()};}
+function makeZip(files){
+ const localParts=[],centralParts=[];let offset=0;const dt=zipDosDateTime();
+ for(const file of files){
+  const nameBytes=zipEncoder.encode(file.name),data=file.bytes instanceof Uint8Array?file.bytes:zipEncoder.encode(file.text||""),crc=zipCrc32(data);
+  const local=new Uint8Array(30+nameBytes.length),lv=new DataView(local.buffer);
+  lv.setUint32(0,0x04034b50,true);lv.setUint16(4,20,true);lv.setUint16(6,0x0800,true);lv.setUint16(8,0,true);lv.setUint16(10,dt.time,true);lv.setUint16(12,dt.date,true);lv.setUint32(14,crc,true);lv.setUint32(18,data.length,true);lv.setUint32(22,data.length,true);lv.setUint16(26,nameBytes.length,true);lv.setUint16(28,0,true);local.set(nameBytes,30);localParts.push(local,data);
+  const central=new Uint8Array(46+nameBytes.length),cv=new DataView(central.buffer);
+  cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0x0800,true);cv.setUint16(10,0,true);cv.setUint16(12,dt.time,true);cv.setUint16(14,dt.date,true);cv.setUint32(16,crc,true);cv.setUint32(20,data.length,true);cv.setUint32(24,data.length,true);cv.setUint16(28,nameBytes.length,true);cv.setUint16(30,0,true);cv.setUint16(32,0,true);cv.setUint16(34,0,true);cv.setUint16(36,0,true);cv.setUint32(38,0,true);cv.setUint32(42,offset,true);central.set(nameBytes,46);centralParts.push(central);offset+=local.length+data.length;
+ }
+ const centralSize=centralParts.reduce((sum,p)=>sum+p.length,0),end=new Uint8Array(22),ev=new DataView(end.buffer);
+ ev.setUint32(0,0x06054b50,true);ev.setUint16(4,0,true);ev.setUint16(6,0,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);ev.setUint32(12,centralSize,true);ev.setUint32(16,offset,true);ev.setUint16(20,0,true);
+ return new Blob([...localParts,...centralParts,end],{type:"application/zip"});
+}
+function safeFilePart(value){return String(value||"sin_nombre").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9_-]+/g,"_").replace(/^_+|_+$/g,"").slice(0,40)||"sin_nombre";}
+$("zipBtn").addEventListener("click",()=>{
+ if(!records.length){alert("Todavía no hay registros para exportar.");return;}
+ try{
+  const files=[],photoNamesByRecord={};
+  records.forEach((r,i)=>{const names=[];(r.fotos||[]).forEach((src,j)=>{const name=`fotos/registro_${String(i+1).padStart(4,"0")}_${safeFilePart(r.comun||r.especie)}_foto_${j+1}.jpg`;files.push({name,bytes:dataUrlToBytes(src)});names.push(name);});photoNamesByRecord[i]=names;});
+  files.unshift({name:"registro_avifauna.csv",text:buildCsv(photoNamesByRecord)});
+  files.push({name:"LEEME.txt",text:"Respaldo de registro de avifauna\n\nLa planilla registro_avifauna.csv contiene los datos de cada registro y los nombres de archivo de sus fotografías. Las imágenes JPG están en la carpeta fotos/. Conserva también la opción Respaldo completo (incluye fotos), que genera un archivo JSON importable para recuperar los registros dentro de la app."});
+  const blob=makeZip(files),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="registro_avifauna_fotos.zip";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ }catch(err){console.error(err);alert("No se pudo crear el ZIP. Prueba exportar el respaldo JSON y comprueba que las fotos estén guardadas.");}
+});
+$("backupBtn").addEventListener("click",()=>$("fileInput").click());
+$("fileInput").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data))throw Error();if(confirm(`Se importarán ${data.length} registros. ¿Agregar a los actuales?`)){records=records.concat(data);save();$("status").textContent="Respaldo importado.";}}catch(err){alert("El archivo no parece ser un respaldo JSON válido.");}e.target.value="";});
+$("clearBtn").addEventListener("click",()=>{if(confirm("¿Seguro que quieres borrar TODOS los registros guardados en este dispositivo? Exporta primero una copia si la necesitas.")){records=[];save();$("status").textContent="Se borraron los registros."; }});
+render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){navigator.serviceWorker.register("./sw.js").catch(()=>{});}
+</script>
+</body>
+</html>
